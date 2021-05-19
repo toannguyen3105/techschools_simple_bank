@@ -10,9 +10,9 @@ import (
 	"github.com/toannguyen3105/techschools_simple_bank/utils"
 )
 
-func createRandomEntry(t *testing.T) Entry {
+func createRandomEntry(t *testing.T, account Account) Entry {
 	arg := CreateEntryParams{
-		AccountID: 1,
+		AccountID: account.ID,
 		Amount:    utils.RandomMoney(),
 	}
 
@@ -30,12 +30,13 @@ func createRandomEntry(t *testing.T) Entry {
 }
 
 func TestCreateEntry(t *testing.T) {
-	createRandomEntry(t)
+	account := createRandomAccount(t)
+	createRandomEntry(t, account)
 }
 
 func TestGetEntry(t *testing.T) {
-	// create entry
-	entry1 := createRandomEntry(t)
+	account := createRandomAccount(t)
+	entry1 := createRandomEntry(t, account)
 	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, entry2)
@@ -47,7 +48,8 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestUpdateEntry(t *testing.T) {
-	entry1 := createRandomEntry(t)
+	account := createRandomAccount(t)
+	entry1 := createRandomEntry(t, account)
 
 	arg := UpdateEntryParams{
 		ID:     entry1.ID,
@@ -65,7 +67,8 @@ func TestUpdateEntry(t *testing.T) {
 }
 
 func TestDeleteEntry(t *testing.T) {
-	entry1 := createRandomEntry(t)
+	account := createRandomAccount(t)
+	entry1 := createRandomEntry(t, account)
 	err := testQueries.DeleteEntry(context.Background(), entry1.ID)
 	require.NoError(t, err)
 
@@ -76,8 +79,10 @@ func TestDeleteEntry(t *testing.T) {
 }
 
 func TestListEntry(t *testing.T) {
+	account := createRandomAccount(t)
+
 	for i := 0; i < 10; i++ {
-		createRandomEntry(t)
+		createRandomEntry(t, account)
 	}
 
 	arg := ListEntriesParams{
