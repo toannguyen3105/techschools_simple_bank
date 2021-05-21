@@ -3,9 +3,25 @@ package api
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/require"
+	db "github.com/toannguyen3105/techschools_simple_bank/db/sqlc"
+	"github.com/toannguyen3105/techschools_simple_bank/utils"
 )
+
+func newTestServer(t *testing.T, store db.Store) *Server {
+	config := utils.Config{
+		TokenSymmectricKey:  utils.RandomString(32),
+		AccessTokenDuration: time.Minute,
+	}
+
+	server, err := NewServer(config, store)
+	require.NoError(t, err)
+
+	return server
+}
 
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
